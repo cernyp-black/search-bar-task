@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import trim from "lodash.trim";
 import debounce from "lodash.debounce";
 import Dropdown from "./Dropdown";
@@ -51,24 +51,24 @@ const Search = () => {
     }
   };
 
+  const getResults = async (input) => {
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?bbox=${boundingBox}&access_token=${accessToken}`;
+    const data = await fetch(url);
+    const json = await data.json();
+    const newResults = json.features;
+    console.log(newResults);
+    setResults(newResults);
+  };
+
+  const debounceGetResults = useCallback(debounce(getResults, 300), []);
+
   useEffect(() => {
-    const fetchResults = async (input) => {
-      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?bbox=${boundingBox}&access_token=${accessToken}`;
-      const data = await fetch(url);
-      const json = await data.json();
-      const newResults = json.features;
-      console.log(newResults);
-      setResults(newResults);
-    };
-
-    const debounceFetchResults = debounce(fetchResults, 300);
-
-    if (input) {
-      debounceFetchResults(input);
+    if (input.length > 2) {
+      debounceGetResults(input);
     } else {
       setResults([]);
     }
-  }, [input, accessToken]);
+  }, [input, accessToken, debounceGetResults]);
 
   return (
     <div className="flex flex-col items-center mx-12">
