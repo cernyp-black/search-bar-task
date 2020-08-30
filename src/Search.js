@@ -22,34 +22,46 @@ const Search = () => {
     setSelectedItem(results[selectedItemIndex]);
   }, [selectedItemIndex, results]);
 
+  useEffect(
+    useCallback(() => {
+      console.log(selectedItemIndex);
+    }, [selectedItemIndex]),
+    [selectedItemIndex]
+  );
+
   const handleKeyDown = (e) => {
-    const key = e.which || e.keyCode || 0;
+    const key = e.key;
 
     switch (key) {
-      case 38:
-        if (selectedItemIndex !== null) {
-          if (selectedItemIndex > 0 && selectedItemIndex < results.length) {
-            setSelectedItemIndex(selectedItemIndex - 1);
-          }
-        } else if (selectedItemIndex === 0 || selectedItemIndex === null) {
+      case "ArrowUp":
+        e.preventDefault();
+
+        if (selectedItemIndex > 0) {
+          setSelectedItemIndex(selectedItemIndex - 1);
+        } else {
           setSelectedItemIndex(results.length - 1);
         }
-        console.log(selectedItemIndex);
+
         break;
-      case 40:
-        if (selectedItemIndex !== null) {
-          if (selectedItemIndex > 0 && selectedItemIndex < results.length) {
-            setSelectedItemIndex(selectedItemIndex + 1);
-          }
+      case "ArrowDown":
+        e.preventDefault();
+
+        if (selectedItemIndex < results.length - 1) {
+          setSelectedItemIndex(selectedItemIndex + 1);
+        } else if (selectedItemIndex === 4) {
+          setSelectedItemIndex(0);
         } else {
           setSelectedItemIndex(0);
         }
-        console.log(selectedItemIndex);
+
         break;
       default:
         break;
     }
   };
+
+  const handleMouseEnter = (e) => {};
+  const handleMouseLeave = (e) => {};
 
   const getResults = async (input) => {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?bbox=${boundingBox}&access_token=${accessToken}`;
@@ -81,7 +93,12 @@ const Search = () => {
           onKeyDown={(e) => handleKeyDown(e)}
         />
         {results?.length > 0 && (
-          <Dropdown results={results} selectedItem={selectedItem} />
+          <Dropdown
+            results={results}
+            selectedItem={selectedItem}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+          />
         )}
       </div>
     </div>
