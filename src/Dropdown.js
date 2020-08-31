@@ -4,18 +4,21 @@ import DropdownItem from "./DropdownItem";
 const Dropdown = ({
   results,
   selectedItem,
-  handleMouseEnter,
-  handleMouseLeave,
+  handleMouseMove,
+  handleMouseOut,
+  itemRefs,
+  dropdownRef,
 }) => {
   return (
-    <div className="shadow-lg py-1">
+    <div className="shadow-lg" ref={dropdownRef}>
       {results.map((item, i) => (
         <DropdownItem
           item={item}
           key={i}
           selected={item === selectedItem}
-          handleMouseEnter={handleMouseEnter}
-          handleMouseLeave={handleMouseLeave}
+          handleMouseMove={handleMouseMove}
+          handleMouseOut={handleMouseOut}
+          itemRef={(el) => (itemRefs.current[i] = el)}
         />
       ))}
     </div>
