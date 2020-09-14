@@ -17,14 +17,34 @@ const Search = () => {
   const accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
   const boundingBox = "-0.510375,51.28676,0.334015,51.691874";
 
+  const handleError = (err) => {
+    alert(err);
+  };
+
   const getResults = async (input) => {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?bbox=${boundingBox}&access_token=${accessToken}`;
-    const data = await fetch(url);
+    const data = await fetch(url).catch(handleError);
     const json = await data.json();
     const newResults = json.features;
     console.log(newResults);
     setResults(newResults);
   };
+
+  // const getResults = async (input) => {
+  //   const url = `https://api.mapbox.com/iuucdogvb/v5/mapbox.places/${input}.json?bbox=${boundingBox}&access_token=${accessToken}`;
+  //   fetch(url)
+  //     .then((data) => {
+  //       data.json();
+  //     })
+  //     .then((json) => {
+  //       const newResults = json.features;
+  //       console.log(newResults);
+  //       setResults(newResults);
+  //     })
+  //     .catch((err) => {
+  //       alert(err);
+  //     });
+  // };
 
   const debounceGetResults = useCallback(debounce(getResults, 300), []);
 
